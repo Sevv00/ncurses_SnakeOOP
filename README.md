@@ -1,1 +1,1 @@
-# ncurses_SnakeOOP
+# Snake project for OOP classes
