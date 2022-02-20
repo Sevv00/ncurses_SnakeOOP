@@ -1,8 +1,13 @@
 #ifndef __SNAKE_H__
 #define __SNAKE_H__
 
-#include <vector.h>
+#include <vector>
+#include <cstdlib>
+#include <ctime>
+
 #include "winsys.h"
+#include "cpoint.h"
+#include "screen.h"
 
 
 class CSnake:public CFramedWindow
@@ -13,9 +18,9 @@ private:
   bool help = false;
   bool died = false;
   int points = 0;
-  int level = 1;
-  Cpoint food;
-  vector <Cpoint> SnakeBody;
+  int direction;
+  CPoint food;
+  std::vector <CPoint> SnakeBody;
 
   //Printing current game interface
   void printMenu();
@@ -30,12 +35,12 @@ private:
   bool moveSnake();
 
 
-  void Game();
+  void printGame();
 
 public:
   CSnake(CRect r, char _c = ' ');
   bool eventHandler(int key);
-  void paint();
+  void Game();
 };
 
 #endif

@@ -1,5 +1,8 @@
 #include "snake.h"
 
+
+
+
 CSnake::CSnake(CRect r, char _c /*=' '*/):
   CFramedWindow(r, _c)
 {
@@ -79,6 +82,113 @@ void CSnake::printGameOver()
   gotoyx(y,x-8);
   printl("YOUR RESULT: %d", points);
   attroff(A_REVERSE);
+}
+
+void CSnake::generateFood()
+{
+  CPoint newFood;
+  while(true){
+    int XnewFood = 1 + rand()% (geom.size.x - 2);
+    int YnewFood = 1 + rand()% (geom.size.y - 2);
+    bool overlaping = false;
+    newFood = CPoint(XnewFood, YnewFood);
+    for(auto &snakebody:SnakeBody)
+    {
+      if(snakebody.x == newFood.x && snakebody.y == newFood.y){
+        overlaping = true;
+        break;
+      }
+    }
+    if(!overlaping){
+      break;
+    }
+  }
+  food = newFood;
+}
+
+bool CSnake::ateFood()
+{
+  bool ate = false;
+  if(SnakeBody.front().x == food.x && SnakeBody.front().y == food.y){
+    points++;
+    ate = true;
+  }
+  if(ate)
+  {
+    generateFood();
+    return true;
+  }
+  return false;
+}
+
+bool CSnake::moveSnake()
+{
+  if(pause || menu){
+    return true;
+  }
+  CPoint tail = SnakeBody[SnakeBody.size()-1];
+  for (unsigned int i = SnakeBody.size()-1; i > 0; i--)
+  {
+    SnakeBody[i] = SnakeBody[i-1];
+  } 
+  if(direction == KEY_LEFT)
+  {
+    SnakeBody[0] += CPoint(-1,0);
+  } 
+  else if(direction == KEY_RIGHT)
+  {
+    SnakeBody[0] += CPoint(1,0);
+  }
+  else if(direction == KEY_UP)
+  {
+    SnakeBody[0] += CPoint(0,-1);
+  }
+  else if(direction == KEY_DOWN)
+  {
+    SnakeBody[0] += CPoint(0,1);
+  }
+  for(unsigned int i = 1; i < SnakeBody.size(); i++)
+  {
+    if(SnakeBody[0].x == SnakeBody[i].x && SnakeBody[0].y == SnakeBody[i].y)
+    {
+      return false;
+    }
+  }
+  if(SnakeBody[0].x == 0){
+    SnakeBody[0].x = geom.size.x-2;
+  }
+  if(SnakeBody[0].x == geom.size.x-1){
+    SnakeBody[0].x = 1;
+  }
+  if(SnakeBody[0].y == 0){
+    SnakeBody[0].x = geom.size.y-2;
+  }
+  if(SnakeBody[0].y == geom.size.x-1){
+    SnakeBody[0].y = 1;
+  }
+  if(ateFood())
+  {
+    SnakeBody.push_back(tail);
+  }
+  return true;
+}
+
+void CSnake::startGame()
+{
+  menu = false;
+  pause = false;
+  died = false;
+  help = false;
+  direction = KEY_LEFT;
+  points = 0;
+  int x_start_position = geom.size.x/2;
+  int y_start_position = geom.size.y/2;
+  SnakeBody.clear();
+  SnakeBody.push_back(CPoint(x_start_position, y_start_position));
+  SnakeBody.push_back(CPoint(x_start_position + 1, y_start_position));
+  SnakeBody.push_back(CPoint(x_start_position + 2, y_start_position));
+  generateFood();
+  Game();
 }
 
 void CSnake::printGame()
