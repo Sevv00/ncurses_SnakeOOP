@@ -17,8 +17,10 @@ private:
   bool pause = true;
   bool help = false;
   bool died = false;
+  int ticks_counter = 0;
   int points = 0;
-  int direction;
+  int speed = 20;
+  int direction = KEY_RIGHT;
   CPoint food;
   std::vector <CPoint> SnakeBody;
 
@@ -38,7 +40,15 @@ private:
   void printGame();
 
 public:
-  CSnake(CRect r, char _c = ' ');
+  CSnake(CRect r, char _c = ' ') : CFramedWindow(r, _c)
+{
+  srand(time(NULL));
+  startGame();
+  menu = true;
+  help = false;
+  pause = true;
+  printGame();
+}
   bool eventHandler(int key);
   void Game();
 };

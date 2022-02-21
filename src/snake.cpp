@@ -2,12 +2,6 @@
 
 
 
-
-CSnake::CSnake(CRect r, char _c /*=' '*/):
-  CFramedWindow(r, _c)
-{
-}
-
 void CSnake::printMenu()
 {
   int y = geom.topleft.y;
@@ -193,5 +187,86 @@ void CSnake::startGame()
 
 void CSnake::printGame()
 {
-  
+  if(!pause && !menu && !moveSnake())
+  {
+    died = true;
+    pause = true;
+  }
+  gotoyx(geom.topleft.y + food.y, geom.topleft.x + food.x);
+  printc('0');
+  for(unsigned int i = 1; i < SnakeBody.size(); i++)
+  {
+    gotoyx(geom.topleft.y + SnakeBody[i].y, geom.topleft.x + SnakeBody[i].x);
+    printc('+');
+  }
+      gotoyx(geom.topleft.y + SnakeBody[0].y, geom.topleft.x + SnakeBody[0].x);
+    printc('o');
+}
+
+bool CSnake::eventHandler(int key)
+{
+  if(!pause && key == ERR)
+  {
+    ticks_counter++;
+    if(speed <= ticks_counter) ticks_counter = 0;
+  }
+  if(!died && tolower(key) == 'p')
+  {
+    pause = !pause;
+    if(!pause) help = false;
+    return true;
+  }
+  if(pause && tolower(key) == 'h')
+  {
+    help = !help;
+    return true;
+  }
+  if(pause && !menu && tolower(key) == 'q')
+  {
+    menu = !menu;
+    return true;
+  }
+  if(pause && menu && tolower(key) == 'q')
+  {
+    exit(0);
+  }
+  if(tolower(key) == 'r')
+  {
+    startGame();
+    return true;
+  }
+  if(!died && !pause && (key == KEY_DOWN || key == KEY_UP || key == KEY_LEFT || key == KEY_RIGHT))
+  {
+    if((key == KEY_DOWN && direction != KEY_UP) || (key == KEY_UP && direction != KEY_DOWN) || (key == KEY_RIGHT && direction != KEY_LEFT) || (key == KEY_LEFT && direction != KEY_RIGHT))
+    {
+      direction = key;
+    }
+    return true;
+  }
+  if (key == '\t') 
+  {
+    pause = true;
+  }
+  return CFramedWindow::handleEvent(key);
+}
+
+void CSnake::Game() 
+{
+  CFramedWindow::paint();
+  printGame();
+  if (!died)
+  {
+    gotoyx(geom.topleft.y - 1, geom.topleft.x);
+    printl("| SCORE: %d |", points);
+    if (pause) 
+    {
+      if (menu) printMenu();
+      else if (help) printHelp();
+      else printPause();
+    }
+  } 
+  else 
+  {
+    printGameOver();
+  }
 }
