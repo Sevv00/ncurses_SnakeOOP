@@ -5,6 +5,8 @@ void CSnake::startGame() {
     menu = false;
     help = false;
     died = false;
+    game_ticks = 0;
+    speed = 50;
     direction = KEY_RIGHT;
     level = 0;
     int startPosition_x = rand() % (geom.size.x - 5) + 1;
@@ -46,6 +48,7 @@ bool CSnake::eatFood() {
     }
     if (t) {
         generateFood();
+        if(speed > 1) speed--;
         return true;
     }
     return false;
@@ -92,7 +95,7 @@ bool CSnake::moveSnake() {
 }
 
 void CSnake::draw() {
-    if (!menu && !moveSnake()) {
+    if (game_ticks == 0 && !moveSnake()) {
         died = true;
         menu = true;
     }
@@ -140,6 +143,12 @@ void CSnake::printHelp() {
 }
 
 bool CSnake::handleEvent(int key) {
+    if (!menu && key == ERR) {
+        game_ticks++;
+        if (speed <= game_ticks) {
+            game_ticks = 0;
+        }
+    }
     if (!died && tolower(key) == 'p') {
         menu = !menu;
         if (!menu) {
@@ -158,10 +167,12 @@ bool CSnake::handleEvent(int key) {
         CSnake::startGame();
         return true;
     }
-    if (!died && !menu && (key == KEY_UP || key == KEY_DOWN || key == KEY_LEFT || key == KEY_RIGHT)) {
+    if (!died && !menu) {
         if ((key == KEY_UP && direction != KEY_DOWN) || (key == KEY_DOWN && direction != KEY_UP) ||
             (key == KEY_LEFT && direction != KEY_RIGHT) || (key == KEY_RIGHT && direction != KEY_LEFT)) {
             direction = key;
+            if(!moveSnake()) died = true;
+            game_ticks = 0;
         }
         return true;
     }

@@ -17,6 +17,8 @@ private:
   bool menu = true;
   bool help = true;
   bool died = false;
+  int speed = 50;
+  int game_ticks = 0;
   int direction = KEY_RIGHT;
   int level = 0;
   CPoint food;
