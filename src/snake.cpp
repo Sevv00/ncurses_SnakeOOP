@@ -137,9 +137,17 @@ void CSnake::printHelp() {
     gotoyx(y + 5, x + 2);
     printl("Be cautious to not eat yourself");
     gotoyx(y + 7, x + 2);
-    printl("Controls: 'P' or 'R' - play || 'H' -help || 'Q' - quit game");
+    printl("Controls:");
     gotoyx(y + 9, x + 2);
-    printl("You can move the game window during pause mod using arrows");
+    printl("'P' or 'R' - play");
+    gotoyx(y + 9, x + 2);
+    printl("'H' - help");
+    gotoyx(y + 11, x + 2);
+    printl("'Q' - quit game");
+    gotoyx(y + 13, x + 2);
+    printl("You can move the game window during");
+    gotoyx(y + 15, x + 2);
+    printl("pause mod using arrows");
 }
 
 bool CSnake::handleEvent(int key) {
