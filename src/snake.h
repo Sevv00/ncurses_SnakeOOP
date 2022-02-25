@@ -2,8 +2,9 @@
 #define __SNAKE_H__
 
 #include <vector>
-#include <cstdlib>
 #include <ctime>
+#include <cstdlib>
+
 
 #include "winsys.h"
 #include "cpoint.h"
@@ -14,43 +15,39 @@ class CSnake:public CFramedWindow
 {
 private:
   bool menu = true;
-  bool pause = true;
-  bool help = false;
+  bool help = true;
   bool died = false;
-  int ticks_counter = 0;
-  int points = 0;
-  int speed = 20;
   int direction = KEY_RIGHT;
+  int level = 0;
   CPoint food;
-  std::vector <CPoint> SnakeBody;
+  vector <CPoint> SnakeBody;
 
   //Printing current game interface
-  void printMenu();
+  //void drawMenu();
   void printHelp();
-  void printPause();
+  void printMenu();
   void printGameOver();
 
   //Fuctions to handle game mechanics
   void startGame();
   void generateFood();
-  bool ateFood();
+  bool eatFood();
   bool moveSnake();
 
 
-  void printGame();
+  void draw();
 
 public:
   CSnake(CRect r, char _c = ' ') : CFramedWindow(r, _c)
 {
   srand(time(NULL));
   startGame();
-  menu = true;
   help = false;
-  pause = true;
-  printGame();
+  menu = true;
+  draw();
 }
-  bool eventHandler(int key);
-  void Game();
+  bool handleEvent(int key);
+  void paint();
 };
 
 #endif
